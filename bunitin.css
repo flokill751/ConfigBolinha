@@ -1,0 +1,106 @@
+/* styles.css - responsivo, sem JS, cada órbita usa variáveis */
+:root{
+  --bg:#05020a;
+  --neon-a: #00f0ff; /* ciano */
+  --neon-b: #ff00d0; /* magenta */
+  --accent: #ffffff;
+  --ball-size: 18px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background: radial-gradient(1200px 600px at 10% 20%, rgba(0,240,255,0.04), transparent 8%),
+              radial-gradient(1000px 500px at 90% 80%, rgba(255,0,208,0.03), transparent 10%),
+              var(--bg);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* área central onde ficam as órbitas */
+.stage{
+  position:relative;
+  width:min(86vmin, 600px);
+  height: min(86vmin, 600px);
+  display:block;
+  filter: drop-shadow(0 8px 30px rgba(0,0,0,0.6));
+}
+
+/* órbita: usa --size (diâmetro) e --dur (tempo da rotação) */
+.orbit{
+  --size: 300px;
+  --dur: 10s;
+
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:var(--size);
+  height:var(--size);
+  transform: translate(-50%,-50%) rotate(0deg);
+  border-radius:50%;
+  /* efeito de anel composto por muitas linhas finas (visual concêntrico) */
+  background-image:
+    radial-gradient(circle at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 61%),
+    conic-gradient(from 0deg, transparent 0 1deg, rgba(255,255,255,0.02) 1deg 2deg);
+  background-size: 14px 14px, 100% 100%;
+  /* borda neon sutil */
+  box-shadow:
+    0 0 18px rgba(0,240,255,0.06),
+    inset 0 0 10px rgba(255,0,208,0.02);
+  animation: spin var(--dur) linear infinite;
+  display:block;
+  /* leve destaque do anel usando outline com gradiente */
+  outline: 1px solid transparent;
+}
+
+/* inverter sentido quando precisar */
+.orbit.reverse {
+  animation-direction: reverse;
+}
+
+/* bolinha que circula. ela fica deslocada para a borda com translateX */
+.orbit .ball{
+  --b: var(--ball-size);
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:var(--b);
+  height:var(--b);
+  transform: translate(-50%,-50%) translateX(calc(var(--size) / 2 - (var(--b) / 2)));
+  border-radius:50%;
+  /* aparência neon / brilho */
+  background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(255,255,255,0.9) 12%, var(--neon-a) 40%, var(--neon-b) 90%);
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.5),
+    0 0 18px rgba(0,240,255,0.12),
+    0 0 30px rgba(255,0,208,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* efeito extra: pequenas marcações pontilhadas ao longo do anel (pseudo) */
+.orbit::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  pointer-events:none;
+  
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.02),
+    0 0 0 4px rgba(0,240,255,0.01);
+  mix-blend-mode: screen;
+  opacity:0.9;
+}
+
+@keyframes spin {
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to   { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+@media (max-width:420px){
+  :root{ --ball-size: 12px; }
+}
